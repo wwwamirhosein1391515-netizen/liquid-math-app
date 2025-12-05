@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>شیشه مایع و ابزار ریاضی جامع</title>
+    <!-- لود کردن Tailwind CSS -->
+    <script src="[https://cdn.tailwindcss.com](https://cdn.tailwindcss.com)"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'Tahoma', 'sans-serif'],
+                    },
+                    colors: {
+                        'primary': '#4F46E5', /* Indigo */
+                        'secondary': '#8B5CF6', /* Violet */
+                        'dark-bg': '#0F172A', /* Slate 900 */
+                    },
+                }
+            }
+        }
+    </script>
+    <style>
+        /* استایل پس‌زمینه Liquid Glass برای حس عمق و سیالیت */
+        body {
+            background: linear-gradient(135deg, #1e3a8a, #0c4a6e, #1F2937);
+            background-size: 400% 400%;
+            animation: gradient-shift 15s ease infinite;
+            min-height: 100vh;
+        }
+        @keyframes gradient-shift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        /* کلاس Glassmorphism: شفافیت، محوشدگی، حاشیه شفاف */
+        .glass-effect {
+            background-color: rgba(255, 255, 255, 0.1); /* شفافیت سفید */
+            backdrop-filter: blur(15px); /* محو کردن پس زمینه */
+            -webkit-backdrop-filter: blur(15px);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+            border-radius: 1.5rem; /* گرد کردن بیشتر برای حس نرمی */
+        }
+        .calc-button {
+            @apply h-14 rounded-xl text-xl font-bold transition-all active:scale-95 flex items-center justify-center shadow-md;
+        }
+        .num-button {
+            @apply bg-white/20 text-white hover:bg-white/30;
+        }
+        .op-button {
+            @apply bg-indigo-500/30 text-indigo-200 hover:bg-indigo-500/50;
+        }
+        .action-button {
+            @apply bg-rose-500/30 text-rose-200 hover:bg-rose-500/50;
+        }
+    </style>
+</head>
+
+<body class="text-white">
+
+    <!-- نوار بالایی (Liquid Glass Header) -->
+    <header class="p-4 glass-effect sticky top-0 z-20 shadow-lg">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <h1 class="text-xl font-bold tracking-wider text-white">شیشه مایع | ابزار جامع</h1>
+            <span class="text-sm text-gray-300">نسل جدید ابزارهای دیجیتال</span>
+        </div>
+    </header>
+
+    <!-- بخش اصلی (Main Content) - مرکز فرماندهی ریاضی -->
+    <main class="max-w-7xl mx-auto p-4 md:p-8 flex justify-center items-start pt-16">
+        
+        <!-- کانتینر اصلی اپلیکیشن با استایل Glass Effect -->
+        <div id="math-app-container" class="glass-effect w-full max-w-lg p-6 md:p-8">
+            
+            <h2 class="text-3xl font-extrabold text-center mb-6">مرکز محاسبات</h2>
+            
+            <!-- ناوبری تب‌ها -->
+            <div class="flex bg-white/10 p-1 rounded-xl mb-6">
+                <button onclick="changeTab('basic')" id="tab-basic" class="flex-1 py-2 text-sm font-bold rounded-lg transition-all bg-white text-dark-bg shadow-lg">ماشین حساب</button>
+                <button onclick="changeTab('root')" id="tab-root" class="flex-1 py-2 text-sm font-bold rounded-lg transition-all text-gray-200 hover:bg-white/20">رادیکال/توان</button>
+                <button onclick="changeTab('equation')" id="tab-equation" class="flex-1 py-2 text-sm font-bold rounded-lg transition-all text-gray-200 hover:bg-white/20">حل معادلات</button>
+            </div>
+
+            <!-- محتوای متغیر تب‌ها در اینجا قرار می‌گیرد -->
+            <div id="app-content">
+                <!-- محتوا توسط جاوااسکریپت در اینجا بارگذاری می‌شود -->
+            </div>
+
+        </div>
+    </main>
+
+    <!-- فوتر (Liquid Glass Footer) -->
+    <footer class="py-6 mt-16 text-center text-gray-400 text-sm">
+        <p>فناوری شیشه مایع ۲۰۲۵ | طراحی با زیبایی و کارایی</p>
+    </footer>
+    
+    <!-- منطق جاوااسکریپت (Vanilla JS) -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // شروع با تب ماشین حساب پایه
+            changeTab('basic');
+        });
+
+        // --- مدیریت تب‌ها ---
+        function changeTab(tabName) {
+            // به‌روزرسانی استایل دکمه‌ها
+            ['basic', 'root', 'equation'].forEach(tab => {
+                const btn = document.getElementById(`tab-${tab}`);
+                if (btn) {
+                    btn.className = 'flex-1 py-2 text-sm font-bold rounded-lg transition-all';
+                    if (tab === tabName) {
+                        btn.classList.add('bg-white', 'text-dark-bg', 'shadow-lg');
+                    } else {
+                        btn.classList.add('text-gray-200', 'hover:bg-white/20');
+                    }
+                }
+            });
+
+            const contentDiv = document.getElementById('app-content');
+            contentDiv.innerHTML = ''; // پاک کردن محتوای قبلی
+
+            if (tabName === 'basic') {
+                renderBasicCalculator(contentDiv);
+            } else if (tabName === 'root') {
+                renderRootPowerCalculator(contentDiv);
+            } else if (tabName === 'equation') {
+                renderEquationSolver(contentDiv);
+            }
+        }
+
+        // --- ۱. ماشین حساب پایه ---
+        let displayValue = '0';
+        let prevValue = null;
+        let operator = null;
+        let waitingForNewValue = true;
+
+        function updateDisplay() {
+            const display = document.getElementById('calc-display');
+            if (display) {
+                display.innerText = displayValue;
+            }
+        }
+
+        function handleDigit(digit) {
+            if (waitingForNewValue) {
+                displayValue = String(digit);
+                waitingForNewValue = false;
+            } else if (displayValue === '0') {
+                displayValue = String(digit);
+            } else {
+                displayValue += digit;
+            }
+            updateDisplay();
+        }
+
+        function handleDecimal() {
+            if (waitingForNewValue) {
+                displayValue = '0.';
+                waitingForNewValue = false;
+            } else if (!displayValue.includes('.')) {
+                displayValue += '.';
+            }
+            updateDisplay();
+        }
+
+        function handleOperator(nextOperator) {
+            const inputValue = parseFloat(displayValue);
+
+            if (prevValue === null) {
+                prevValue = inputValue;
+            } else if (operator) {
+                const result = calculate(prevValue, inputValue, operator);
+                displayValue = String(result);
+                prevValue = result;
+            }
+
+            operator = nextOperator;
+            waitingForNewValue = true;
+            updateDisplay();
+        }
+
+        function handleEqual() {
+            if (operator && prevValue !== null) {
+                const inputValue = parseFloat(displayValue);
+                const result = calculate(prevValue, inputValue, operator);
+                displayValue = String(result);
+                prevValue = null;
+                operator = null;
+                waitingForNewValue = true;
+            }
+            updateDisplay();
+        }
+
+        function handleClear() {
+            displayValue = '0';
+            prevValue = null;
+            operator = null;
+            waitingForNewValue = true;
+            updateDisplay();
+        }
+
+        function calculate(num1, num2, op) {
+            switch(op) {
+                case '+': return num1 + num2;
+                case '-': return num1 - num2;
+                case '*': return num1 * num2;
+                case '/': return num2 !== 0 ? num1 / num2 : 'خطا';
+                default: return num2;
+            }
+        }
+
+        function renderBasicCalculator(container) {
+            container.innerHTML = `
+                <div class="h-full flex flex-col justify-end gap-3">
+                    <div class="bg-dark-bg/50 p-4 rounded-xl shadow-inner text-right min-h-[80px] flex items-end justify-end overflow-hidden mb-4">
+                        <span id="calc-display" class="text-4xl text-white font-mono tracking-wider truncate">${displayValue}</span>
+                    </div>
+                    
+                    <div class="grid grid-cols-4 gap-2">
+                        <button onclick="handleClear()" class="action-button col-span-2">AC</button>
+                        <button onclick="handleOperator('/')" class="op-button">÷</button>
+                        <button onclick="handleOperator('*')" class="op-button">×</button>
+
+                        <button onclick="handleDigit(7)" class="num-button">7</button>
+                        <button onclick="handleDigit(8)" class="num-button">8</button>
+                        <button onclick="handleDigit(9)" class="num-button">9</button>
+                        <button onclick="handleOperator('-')" class="op-button">-</button>
+
+                        <button onclick="handleDigit(4)" class="num-button">4</button>
+                        <button onclick="handleDigit(5)" class="num-button">5</button>
+                        <button onclick="handleDigit(6)" class="num-button">6</button>
+                        <button onclick="handleOperator('+')" class="op-button">+</button>
+
+                        <button onclick="handleDigit(1)" class="num-button">1</button>
+                        <button onclick="handleDigit(2)" class="num-button">2</button>
+                        <button onclick="handleDigit(3)" class="num-button">3</button>
+                        <button onclick="handleEqual()" class="calc-button row-span-2 bg-secondary text-white hover:bg-secondary/80">=</button>
+
+                        <button onclick="handleDigit(0)" class="num-button col-span-2">0</button>
+                        <button onclick="handleDecimal()" class="num-button">.</button>
+                    </div>
+                </div>
+            `;
+            // بازنشانی نمایش برای اولین بار
+            updateDisplay();
+        }
+
+        // --- ۲. رادیکال و توان ---
+        function calculateRootAndPower() {
+            const inputVal = document.getElementById('rp-input').value;
+            const resultDiv = document.getElementById('rp-result');
+            const val = parseFloat(inputVal);
+            
+            if (isNaN(val)) {
+                resultDiv.innerHTML = '<span class="text-red-300">لطفاً عدد معتبر وارد کنید</span>';
+                return;
+            }
+
+            let resultText = '';
+            
+            // ریشه دوم (رادیکال)
+            if (val < 0) {
+                resultText += '<span class="block text-red-300 mb-2">√: عدد منفی ریشه حقیقی ندارد</span>';
+            } else {
+                const root = Math.sqrt(val);
+                resultText += `<span class="block mb-2">√${val} = ${root.toFixed(4)}</span>`;
+            }
+
+            // توان دو (برعکس)
+            const power = val * val;
+            resultText += `<span class="block">${val}² = ${power.toFixed(4)}</span>`;
+
+            resultDiv.innerHTML = resultText;
+        }
+
+        function renderRootPowerCalculator(container) {
+            container.innerHTML = `
+                <div class="flex flex-col gap-6">
+                    <div class="bg-dark-bg/50 p-4 rounded-xl shadow-inner text-center">
+                        <label class="block text-gray-400 mb-2 text-sm font-medium">عدد را وارد کنید</label>
+                        <input 
+                            type="number" 
+                            id="rp-input"
+                            class="w-full text-center text-3xl font-bold text-white bg-transparent border-b-2 border-primary/50 focus:border-primary outline-none py-2 placeholder-gray-500"
+                            placeholder="0"
+                        />
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3">
+                        <button 
+                            onclick="calculateRootAndPower()"
+                            class="flex flex-col items-center justify-center gap-2 glass-effect bg-indigo-500/30 text-white p-4 rounded-xl transition-all active:scale-95 hover:bg-indigo-500/50"
+                        >
+                            <span class="text-2xl font-serif font-bold">√x & x²</span>
+                            <span class="text-sm">محاسبه هر دو</span>
+                        </button>
+                        <button 
+                            onclick="document.getElementById('rp-input').value = ''"
+                            class="flex flex-col items-center justify-center gap-2 glass-effect bg-rose-500/30 text-white p-4 rounded-xl transition-all active:scale-95 hover:bg-rose-500/50"
+                        >
+                            <span class="text-2xl font-serif font-bold">C</span>
+                            <span class="text-sm">پاک کردن</span>
+                        </button>
+                    </div>
+
+                    <div id="rp-result" class="glass-effect p-4 rounded-xl text-center text-lg font-bold min-h-[100px] flex flex-col justify-center items-center">
+                        نتیجه اینجا نمایش داده می‌شود.
+                    </div>
+                </div>
+            `;
+        }
+
+        // --- ۳. حل معادلات ---
+        function renderEquationSolver(container) {
+            container.innerHTML = `
+                <div class="flex flex-col gap-4">
+                    <div class="flex bg-white/10 p-1 rounded-lg mb-2">
+                        <button onclick="showEquationMode('linear')" id="mode-linear" class="flex-1 py-1.5 text-xs font-bold rounded-md transition-all bg-primary text-white shadow">یک مجهولی</button>
+                        <button onclick="showEquationMode('system')" id="mode-system" class="flex-1 py-1.5 text-xs font-bold rounded-md transition-all text-gray-200 hover:bg-white/20">دو مجهولی</button>
+                    </div>
+                    
+                    <div id="equation-content">
+                        <!-- محتوای معادلات در اینجا بارگذاری می‌شود -->
+                    </div>
+                </div>
+            `;
+            showEquationMode('linear');
+        }
+
+        function showEquationMode(mode) {
+            const contentDiv = document.getElementById('equation-content');
+            
+            // به‌روزرسانی استایل دکمه‌های حالت
+            ['linear', 'system'].forEach(m => {
+                const btn = document.getElementById(`mode-${m}`);
+                if (btn) {
+                    btn.classList.remove('bg-primary', 'text-white', 'shadow');
+                    btn.classList.add('text-gray-200', 'hover:bg-white/20');
+                    if (m === mode) {
+                        btn.classList.add('bg-primary', 'text-white', 'shadow');
+                        btn.classList.remove('text-gray-200', 'hover:bg-white/20');
+                    }
+                }
+            });
+
+            if (mode === 'linear') {
+                contentDiv.innerHTML = `
+                    <div class="glass-effect p-4 rounded-xl text-center">
+                        <h3 class="text-gray-300 mb-4 font-mono text-sm" dir="ltr">ax + b = c</h3>
+                        <div class="flex items-center justify-center gap-2 text-dark-bg" dir="ltr">
+                            <input type="number" id="lin-a" class="w-1/4 h-10 rounded-lg text-center font-bold text-gray-800" placeholder="a" />
+                            <span class="font-serif italic text-lg text-white">x</span>
+                            <span class="text-gray-300">+</span>
+                            <input type="number" id="lin-b" class="w-1/4 h-10 rounded-lg text-center font-bold text-gray-800" placeholder="b" />
+                            <span class="text-gray-300">=</span>
+                            <input type="number" id="lin-c" class="w-1/4 h-10 rounded-lg text-center font-bold text-gray-800" placeholder="c" />
+                        </div>
+                        <button onclick="solveLinear()" class="w-full mt-6 bg-secondary text-white py-2 rounded-xl font-bold hover:bg-secondary/80 active:scale-95 transition">
+                            محاسبه x
+                        </button>
+                        <div id="lin-result" class="mt-4 p-3 rounded-lg font-bold text-lg text-white"></div>
+                    </div>
+                `;
+            } else if (mode === 'system') {
+                contentDiv.innerHTML = `
+                    <div class="glass-effect p-4 rounded-xl text-center">
+                        <h3 class="text-gray-300 mb-4 font-mono text-sm" dir="ltr">
+                            ax + by = c<br>dx + ey = f
+                        </h3>
+                        
+                        <div class="flex flex-col gap-3 text-dark-bg">
+                            <!-- Row 1 -->
+                            <div class="flex items-center gap-2" dir="ltr">
+                                <input type="number" id="sys-a" class="w-1/5 h-10 rounded-lg text-center font-bold text-gray-800" placeholder="a" />
+                                <span class="font-serif italic text-gray-300">x</span>
+                                <span class="text-gray-300">+</span>
+                                <input type="number" id="sys-b" class="w-1/5 h-10 rounded-lg text-center font-bold text-gray-800" placeholder="b" />
+                                <span class="font-serif italic text-gray-300">y</span>
+                                <span class="text-gray-300">=</span>
+                                <input type="number" id="sys-c" class="w-1/5 h-10 rounded-lg text-center font-bold text-gray-800" placeholder="c" />
+                            </div>
+                            <!-- Row 2 -->
+                            <div class="flex items-center gap-2" dir="ltr">
+                                <input type="number" id="sys-d" class="w-1/5 h-10 rounded-lg text-center font-bold text-gray-800" placeholder="d" />
+                                <span class="font-serif italic text-gray-300">x</span>
+                                <span class="text-gray-300">+</span>
+                                <input type="number" id="sys-e" class="w-1/5 h-10 rounded-lg text-center font-bold text-gray-800" placeholder="e" />
+                                <span class="font-serif italic text-gray-300">y</span>
+                                <span class="text-gray-300">=</span>
+                                <input type="number" id="sys-f" class="w-1/5 h-10 rounded-lg text-center font-bold text-gray-800" placeholder="f" />
+                            </div>
+                        </div>
+
+                        <button onclick="solveSystem()" class="w-full mt-6 bg-secondary text-white py-2 rounded-xl font-bold hover:bg-secondary/80 active:scale-95 transition">
+                            محاسبه دستگاه
+                        </button>
+                        <div id="sys-result" class="mt-4 p-3 rounded-lg font-bold text-lg text-white"></div>
+                    </div>
+                `;
+            }
+        }
+
+        // --- منطق حل معادلات ---
+        function getInputVal(id) {
+            const el = document.getElementById(id);
+            return el ? parseFloat(el.value) : NaN;
+        }
+
+        function solveLinear() {
+            const a = getInputVal('lin-a');
+            const b = getInputVal('lin-b');
+            const c = getInputVal('lin-c');
+            const resultDiv = document.getElementById('lin-result');
+
+            if (isNaN(a) || isNaN(b) || isNaN(c)) {
+                resultDiv.className = 'mt-4 p-3 rounded-lg font-bold text-red-300 bg-red-800/20';
+                resultDiv.innerText = 'لطفاً تمام ضرایب را وارد کنید.';
+                return;
+            }
+
+            if (a === 0) {
+                if (b === c) {
+                    resultDiv.className = 'mt-4 p-3 rounded-lg font-bold text-yellow-300 bg-yellow-800/20';
+                    resultDiv.innerText = 'بی‌نهایت جواب';
+                } else {
+                    resultDiv.className = 'mt-4 p-3 rounded-lg font-bold text-red-300 bg-red-800/20';
+                    resultDiv.innerText = 'بدون جواب (ناممکن)';
+                }
+            } else {
+                const x = (c - b) / a;
+                resultDiv.className = 'mt-4 p-3 rounded-lg font-bold text-green-300 bg-green-800/20';
+                resultDiv.innerText = `x = ${x.toFixed(4)}`;
+            }
+        }
+
+        function solveSystem() {
+            const a = getInputVal('sys-a'); const b = getInputVal('sys-b'); const c = getInputVal('sys-c');
+            const d = getInputVal('sys-d'); const e = getInputVal('sys-e'); const f = getInputVal('sys-f');
+            const resultDiv = document.getElementById('sys-result');
+
+            if ([a, b, c, d, e, f].some(isNaN)) {
+                resultDiv.className = 'mt-4 p-3 rounded-lg font-bold text-red-300 bg-red-800/20';
+                resultDiv.innerText = 'لطفاً تمام ضرایب را وارد کنید.';
+                return;
+            }
+
+            const det = (a * e) - (b * d);
+
+            if (det === 0) {
+                resultDiv.className = 'mt-4 p-3 rounded-lg font-bold text-red-300 bg-red-800/20';
+                resultDiv.innerText = 'دستگاه جواب یکتا ندارد.';
+            } else {
+                const x = ((c * e) - (b * f)) / det;
+                const y = ((a * f) - (c * d)) / det;
+                resultDiv.className = 'mt-4 p-3 rounded-lg font-bold text-green-300 bg-green-800/20';
+                resultDiv.innerHTML = `<span dir="ltr">x = ${x.toFixed(4)}</span><br><span dir="ltr">y = ${y.toFixed(4)}</span>`;
+            }
+        }
+    </script>
+</body>
+</html>
+
